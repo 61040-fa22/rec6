@@ -1,4 +1,4 @@
-import {Schema, model } from 'mongoose';
+import {Schema, model} from 'mongoose';
 
 export interface IStudent {
   name: {
@@ -33,6 +33,9 @@ const StudentSchema = new Schema<IStudent>({
         min: 2023,
         max: 2026
     }
+}, {
+    toObject: {virtuals: true, versionKey: false},
+    toJSON: {virtuals: true, versionKey: false}
 });
 
 StudentSchema.virtual('name.full').get(function() {

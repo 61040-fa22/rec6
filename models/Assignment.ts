@@ -10,12 +10,15 @@ export interface IAssignment {
 const AssignmentSchema = new Schema<IAssignment>({
   name: { type: String, required: true },
   points: { type: Number, required: true, min: 0 },
+}, {
+    toObject: {virtuals: true, versionKey: false},
+    toJSON: {virtuals: true, versionKey: false}
 });
 
-AssignmentSchema.virtual('submissions', {
-    ref: 'Submission',
-    localField: '_id',
-    foreignField: 'assignment'
-});
+// AssignmentSchema.virtual('submissions', {
+//     ref: 'Submission',
+//     localField: '_id',
+//     foreignField: 'assignment'
+// });
 
 export default model('Assignment', AssignmentSchema);

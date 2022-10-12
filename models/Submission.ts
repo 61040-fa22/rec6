@@ -1,26 +1,21 @@
-import {Schema, model, HydratedDocument} from 'mongoose';
-import {IAssignment} from './Assignment';
-import {IStudent} from './Student';
+import {Schema, model} from 'mongoose';
+import type {Types} from 'mongoose';
 
 export interface ISubmission {
-    assignment: IAssignment,
+    assignment: Types.ObjectId,
     date: Date,
     score: number,
-    author: IStudent
+    author: Types.ObjectId
 }
 
 const SubmissionSchema = new Schema<ISubmission>({
   assignment: { type: Schema.Types.ObjectId, ref: 'Assignment', required: true },
   date: { type: Schema.Types.Date, required: true },
-  score: { type: Schema.Types.Number, min: 0, validate: {
-    validator: async function(this: HydratedDocument<ISubmission>, val: Number): Promise<boolean> {
-        const res: HydratedDocument<ISubmission> = await this.populate('assignment');
-        console.log(res, this)
-        return val <= res.assignment.points;
-    },
-    message: props => `${props.value} must be lesser or equal to the assignment points.`
-  }},
+  score: { type: Schema.Types.Number, min: 0 },
   author: { type: Schema.Types.ObjectId, ref: 'Student', required: true }
+}, {
+    toObject: {virtuals: true, versionKey: false},
+    toJSON: {virtuals: true, versionKey: false}
 });
 
 export default model('Submission', SubmissionSchema);
