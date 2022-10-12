@@ -1,4 +1,4 @@
-import {Schema, model} from 'mongoose';
+import {Schema, model } from 'mongoose';
 
 export interface IStudent {
   name: {
@@ -19,7 +19,8 @@ const StudentSchema = new Schema<IStudent>({
     },
     middle: {
       type: Schema.Types.String,
-      set: (string: string) => string.charAt(0).toUpperCase() + '.'
+      get: (v: string) => v ? v.charAt(0).toUpperCase() + '.' : '',
+      set: (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
     },
     last: {
       type: Schema.Types.String,
@@ -37,6 +38,8 @@ const StudentSchema = new Schema<IStudent>({
     toObject: {virtuals: true, versionKey: false},
     toJSON: {virtuals: true, versionKey: false}
 });
+
+StudentSchema.index({ 'name.first': 1, 'name.middle': 1, 'name.last': 1 }, { unique: true });
 
 StudentSchema.virtual('name.full').get(function() {
     const names = [this.name.first, this.name.last];
