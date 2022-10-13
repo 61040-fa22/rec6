@@ -17,13 +17,10 @@ const StudentSchema = new Schema<IStudent>({
             required: true,
             set: (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
         },
-        // SOLN: Add getters and setters for a middle name property
         middle: {
             type: Schema.Types.String,
-            // SOLN: Setter to capitalize first letter of middle name only
             set: (string: string) => string.charAt(0).toUpperCase() + string.slice(1),
-            // SOLN: Getter to only return the capitalized first initial (e.g. Nicholas -> N.)
-            get: (v: string) => v ? v.charAt(0).toUpperCase() + '.' : '',
+            get: (v: string) => v ? v.charAt(0) + '.' : '',
         },
         last: {
             type: Schema.Types.String,
