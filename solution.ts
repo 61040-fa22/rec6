@@ -9,19 +9,14 @@ import Student, { IStudent } from './models/Student';
 import Assignment, { IAssignment } from './models/Assignment';
 import Submission, { ISubmission } from './models/Submission';
 
-// Load environment vairables from dotenv
-dotenv.config();
-mongoose.connect(process.env.MONGO_SRV?.replace('<password>', process.env.PASSWORD ?? '') ?? '')
-    .then(
-        () => {
-            console.log('Succesfully connected to MongoDB.');
-            queryDatabase();
-        },
-        () => console.error('Failed to connect to MongoDB.')
-    );
-mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-// gracefully handle promise rejections
-process.on('unhandledRejection', console.error);
+async function queryDatabase() {
+    await repopulate();
+    await findAll();
+    // await findUpperclassmen();
+    // await addStudent();
+    // await addSubmission();
+    // await gradeSubmission();
+}
 
 /**
  * Find all student, assignment, and submission data from the database.
@@ -35,14 +30,6 @@ async function findAll() {
     console.log('submissions', await Promise.all(
         submissions.map((s: HydratedDocument<ISubmission>) => s.populate<{ author: IStudent, assignment: IAssignment }>(['author', 'assignment']).then(m => [m.assignment.name, m.author.name.full, m.score])))
     );
-}
-
-async function queryDatabase() {
-    await findAll();
-    // await addStudent();
-    // await addSubmission();
-    // await gradeSubmission();
-    // await findUpperclassmen();
 }
 
 /**
@@ -68,7 +55,7 @@ async function addStudent() {
  */
 async function addSubmission() {
     const diverge = await Assignment.findOne({ name: 'Fritter Diverge' });
-    const daniel = await Student.findOneAndUpdate({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' }});
+    const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' }});
     const submission = new Submission({
         assignment: diverge,
         author: daniel,
@@ -89,8 +76,23 @@ async function gradeSubmission() {
 }
 
 // DO NOT EDIT ANYTHING BELOW THIS LINE,
-// NOT PART OF RECITATION
+// NOT PART OF ANY EXERCISES
 // (but feel free to reference)
+
+// Load environment variables from dotenv
+dotenv.config();
+// Connect to Mongo through Mongoose
+mongoose.connect(process.env.MONGO_SRV?.replace('<password>', process.env.PASSWORD ?? '') ?? '')
+    .then(
+        () => {
+            console.log('Succesfully connected to MongoDB.');
+            queryDatabase();
+        },
+        () => console.error('Failed to connect to MongoDB.')
+    );
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// gracefully handle promise rejections
+process.on('unhandledRejection', console.error);
 
 /**
  * Clear and re-populate database.

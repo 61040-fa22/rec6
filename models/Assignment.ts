@@ -9,7 +9,7 @@ export interface IAssignment {
 };
 
 const AssignmentSchema = new Schema<IAssignment>({
-    name: { type: Schema.Types.String, required: true },
+    name: { type: Schema.Types.String, required: true, match: [/^Fritter/, 'Assignment name must start with Fritter'] },
     points: { type: Schema.Types.Number, required: true, min: 0 },
     dueDate: { type: Schema.Types.Date, required: true }
 }, {

@@ -34,8 +34,8 @@ const StudentSchema = new Schema<IStudent>({
     year: {
         type: Schema.Types.Number,
         required: true,
-        min: 2023,
-        max: 2026
+        min: [2023, 'Student cannot be an alumni'],
+        max: [2026, 'Student cannot be a prefrosh or future student']
     }
 }, {
     toObject: { virtuals: true, versionKey: false },
