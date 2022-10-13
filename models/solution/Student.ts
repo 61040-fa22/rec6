@@ -41,15 +41,18 @@ const StudentSchema = new Schema<IStudent>({
 
 StudentSchema.index({ 'name.first': 1, 'name.middle': 1, 'name.last': 1 }, { unique: true });
 
-// TODO: Add a full name virtual property
+// SOLN: Add a full name virtual property
 StudentSchema.virtual('name.full')
     // Getter must be able to translate stored properties into a formatted string, e.g. Ben Bitdiddle or Daniel N. Jackson
     .get(function () {
-        // Hint: Reference attributes on `this`!
+        const names = [this.name.first, this.name.last];
+        if (this.name.middle) names.splice(1, 0, this.name.middle);
+        return names.join(' ');
     })
     // Setter must be able to compute stored properties based on single string parameter
     .set(function (v: string) {
-        // Hint: Do something with v!
+        const [first, middle, last] = v.split(' ');
+        this.name = { first, middle, last };
     });
 
 export default model('Student', StudentSchema);
