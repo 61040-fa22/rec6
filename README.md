@@ -12,7 +12,7 @@ Follow the instructions [here](https://docs.google.com/presentation/d/1HJ4Lz1a2I
 
 After following the instructions above, you should have copied a secret that looks something like `mongodb+srv://xxxxxx:<password>@cluster0.xxxxxx.mongodb.net/?retryWrites=true&w=majority`. Note that this allows complete access to your database, so do not include it anywhere that is pushed to GitHub or any other publicly accessible location.
 
-To allow your local server to connect to the database you just created, create a file named .env in the project's root directory with the contents:
+To allow your local server to connect to the database you just created, edit the `.env` file in the project's root directory with the contents:
 
 ```sh
 MONGO_SRV=mongodb+srv://xxxxxx:xxxxxxxxx@cluster0.xxxxxx.mongodb.net/?retryWrites=true&w=majority
