@@ -31,7 +31,7 @@ async function findAll() {
     }
     async function populateSubmissions(submission: HydratedDocument<ISubmission>) {
         return submission.populate<{ author: IStudent, assignment: IAssignment }>(['author', 'assignment'])
-            .then(m => [m.assignment.name, m.author.name.full, m.score]);
+            .then(m => [m.assignment.name, `${m.author.name.first} ${m.author.name.middle} ${m.author.name.last}`, m.score]);
     }
     const students: HydratedDocument<IStudent>[] = await Student.find({});
     const assignments: HydratedDocument<IAssignment>[] = await Assignment.find({});
@@ -122,7 +122,7 @@ async function repopulate() {
         for (const submission of submissions) {
             await submission.save();
             const s = await submission.populate<{ author: IStudent, assignment: IAssignment }>(['author', 'assignment']);
-            console.log(`Created submission on assignment ${s.assignment.name} by ${s.author.name.full}`);
+            console.log(`Created submission on assignment ${s.assignment.name} by ${s.author.name.first} ${s.author.name.middle} ${s.author.name.last}`);
         }
     }
 
@@ -142,7 +142,7 @@ async function repopulate() {
         ];
         for (const student of students) {
             await student.save();
-            console.log(`Created student ${student.name.full}`);
+            console.log(`Created student ${student.name.first} ${student.name.first} ${student.name.last}`);
         }
     }
 
