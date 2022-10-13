@@ -46,6 +46,8 @@ async function findAll() {
  */
 async function findUpperclassmen() {
     const upperclassmen = await Student.find({ year: { $lte: 2024 } });
+    // ALTERNATE SOLN:
+    // const upperclassmen = await Student.where('year').lte(2024);
     console.log('upperclassmen', upperclassmen);
 }
 
@@ -81,6 +83,10 @@ async function gradeSubmission() {
     const diverge = await Assignment.findOne({ name: 'Fritter Diverge' });
     const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' } });
     const gradedSubmission = await Submission.findOneAndUpdate({ assignment: diverge, author: daniel }, { score: 10 }, { returnDocument: 'after' });
+    // ALTERNATE SOLN:
+    // const gradedSubmission = await Submission.findOne({ assignment: diverge, author: daniel });
+    // gradedSubmission?.score = 10;
+    // gradeSubmission.save();
     console.log('graded submission', gradedSubmission);
 }
 
