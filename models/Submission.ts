@@ -1,6 +1,5 @@
-import { Schema, model, HydratedDocument } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import type { Types } from 'mongoose';
-import { IAssignment } from './Assignment';
 
 export interface ISubmission {
     assignment: Types.ObjectId,

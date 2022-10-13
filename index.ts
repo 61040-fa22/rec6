@@ -1,10 +1,15 @@
+import dotenv from 'dotenv';
+
+// mongoose imports
 import mongoose from 'mongoose';
 import type { HydratedDocument } from 'mongoose';
-import dotenv from 'dotenv';
+
+// models and type imports
 import Student, { IStudent } from './models/Student';
 import Assignment, { IAssignment } from './models/Assignment';
 import Submission, { ISubmission } from './models/Submission';
 
+// Load environment vairables from dotenv
 dotenv.config();
 mongoose.connect(process.env.MONGO_SRV?.replace('<password>', process.env.PASSWORD ?? '') ?? '')
     .then(
@@ -14,8 +19,9 @@ mongoose.connect(process.env.MONGO_SRV?.replace('<password>', process.env.PASSWO
         },
         () => console.error('Failed to connect to MongoDB.')
     );
-process.on('unhandledRejection', console.error);
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+// gracefully handle promise rejections
+process.on('unhandledRejection', console.error);
 
 /**
  * Find all student, assignment, and submission data from the database.
@@ -32,11 +38,10 @@ async function findAll() {
 }
 
 async function queryDatabase() {
-    // await repopulate();
+    await findAll();
     // await addStudent();
     // await addSubmission();
     // await gradeSubmission();
-    // await findAll();
     // await findUpperclassmen();
 }
 
@@ -82,6 +87,10 @@ async function gradeSubmission() {
     const gradedSubmission = await Submission.findOneAndUpdate({assignment: diverge, author: daniel}, {score: 10}, {returnDocument: 'after'});
     console.log('graded submission', gradedSubmission);
 }
+
+// DO NOT EDIT ANYTHING BELOW THIS LINE,
+// NOT PART OF RECITATION
+// (but feel free to reference)
 
 /**
  * Clear and re-populate database.
