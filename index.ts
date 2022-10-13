@@ -36,7 +36,7 @@ async function findAll() {
     const students: HydratedDocument<IStudent>[] = await Student.find({});
     const assignments: HydratedDocument<IAssignment>[] = await Assignment.find({});
     const submissions: HydratedDocument<ISubmission>[] = await Submission.find({});
-    console.log('students', students.length);
+    console.log('students', students);
     console.log('assignments', await Promise.all(assignments.map(populateAssignments)));
     console.log('submissions', await Promise.all(submissions.map(populateSubmissions)));
 }
