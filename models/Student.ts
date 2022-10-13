@@ -20,7 +20,7 @@ const StudentSchema = new Schema<IStudent>({
         middle: {
             type: Schema.Types.String,
             set: (string: string) => string.charAt(0).toUpperCase() + string.slice(1),
-            get: (v: string) => v ? v.charAt(0) + '.' : '',
+            get: (v: string) => v ? v.charAt(0) + '.' : ''
         },
         last: {
             type: Schema.Types.String,
@@ -48,8 +48,9 @@ StudentSchema.virtual('name.full')
         const names = [this.name.first, this.name.last];
         if (this.name.middle) names.splice(1, 0, this.name.middle);
         return names.join(' ');
+    })
     // Setter must be able to compute stored properties based on single string parameter
-    }).set(function (v: string) {
+    .set(function (v: string) {
         const [first, middle, last] = v.split(' ');
         this.name = { first, middle, last };
     });

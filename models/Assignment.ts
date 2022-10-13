@@ -1,15 +1,14 @@
-import { Schema, model } from 'mongoose';
-import { ISubmission } from './Submission';
+import { Schema, model, Types } from 'mongoose';
 
 export interface IAssignment {
     name: string,
     points: number,
     dueDate: Date,
-    submissions?: Array<ISubmission>
+    submissions?: Array<Types.ObjectId>
 };
 
 const AssignmentSchema = new Schema<IAssignment>({
-    name: { type: Schema.Types.String, required: true, match: [/^Fritter/, 'Assignment name must start with Fritter'] },
+    name: { type: Schema.Types.String, required: true, match: [/^Fritter/, 'Assignment name must start with Fritter'], unique: true },
     points: { type: Schema.Types.Number, required: true, min: 0 },
     dueDate: { type: Schema.Types.Date, required: true }
 }, {

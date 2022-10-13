@@ -22,14 +22,23 @@ async function queryDatabase() {
  * Find all student, assignment, and submission data from the database.
  */
 async function findAll() {
+    async function populateAssignments(assignment: HydratedDocument<IAssignment>) {
+        console.log(assignment)
+        return assignment.populate<{ submissions: ISubmission[] }>({
+            path: 'submissions',
+            populate: { path: 'assignment' }
+        }).then(m => [m.name, m.points, m.dueDate, m.submissions.map(s => s.score)]);
+    }
+    async function populateSubmissions(submission: HydratedDocument<ISubmission>) {
+        return submission.populate<{ author: IStudent, assignment: IAssignment }>(['author', 'assignment'])
+            .then(m => [m.assignment.name, m.author.name.full, m.score]);
+    }
     const students: HydratedDocument<IStudent>[] = await Student.find({});
     const assignments: HydratedDocument<IAssignment>[] = await Assignment.find({});
     const submissions: HydratedDocument<ISubmission>[] = await Submission.find({});
     console.log('students', students.length);
-    console.log('assignments', assignments.length);
-    console.log('submissions', await Promise.all(
-        submissions.map((s: HydratedDocument<ISubmission>) => s.populate<{ author: IStudent, assignment: IAssignment }>(['author', 'assignment']).then(m => [m.assignment.name, m.author.name.full, m.score])))
-    );
+    console.log('assignments', await Promise.all(assignments.map(populateAssignments)));
+    console.log('submissions', await Promise.all(submissions.map(populateSubmissions)));
 }
 
 /**
@@ -51,11 +60,11 @@ async function addStudent() {
 }
 
 /**
- * SOLN: Add a submission by author Daniel N. Jackson Jr. for assignment Fritter Diverge, current date, with no score.
+ * SOLN: Add a submission by author Daniel Nicholas Jackson Jr. for assignment Fritter Diverge, current date, with no score.
  */
 async function addSubmission() {
     const diverge = await Assignment.findOne({ name: 'Fritter Diverge' });
-    const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' }});
+    const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' } });
     const submission = new Submission({
         assignment: diverge,
         author: daniel,
@@ -66,12 +75,12 @@ async function addSubmission() {
 }
 
 /**
- * SOLN: Grade Daniel N. Jackson's submission for Fritter Converge.
+ * SOLN: Grade Daniel Nicholas Jackson Jr.'s submission for Fritter Converge.
  */
 async function gradeSubmission() {
     const diverge = await Assignment.findOne({ name: 'Fritter Diverge' });
-    const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' }});
-    const gradedSubmission = await Submission.findOneAndUpdate({assignment: diverge, author: daniel}, {score: 10}, {returnDocument: 'after'});
+    const daniel = await Student.findOne({ name: { first: 'Daniel', middle: 'Nicholas', last: 'Jackson Jr.' } });
+    const gradedSubmission = await Submission.findOneAndUpdate({ assignment: diverge, author: daniel }, { score: 10 }, { returnDocument: 'after' });
     console.log('graded submission', gradedSubmission);
 }
 
